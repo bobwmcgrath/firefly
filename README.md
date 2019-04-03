@@ -22,3 +22,6 @@ https://docs.google.com/document/d/1ZPEneeNdc6gHhQVbn35usS5zam0JfSeI3uuNZ7ygSEo/
 
 Photo transistor schematic
 https://www.digikey.com/-/media/Images/Article%20Library/TechZone%20Articles/2018/September/How%20to%20Use%20Photodiodes%20and%20Phototransistors%20Most%20Effectively/article-2018september-how-to-use-fig3.jpg?ts=77b9d89e-30c2-4136-898a-1c47026af6cd&la=en-US
+
+project insperation
+https://www.youtube.com/watch?v=ix66tQ93bdU
