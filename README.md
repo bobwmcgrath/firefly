@@ -6,7 +6,9 @@ Things to do:
 
 convert arduino code to C code for the attiny10 (fireflyArduino.ino -> main.cpp)
 
-I do not know how well this will work with more than 2 fireflys
+optimize for low power consumption
+
+figure out how well this will work with more than 2 fireflys
 
 more percise timing may be accomplished with interupts
 
