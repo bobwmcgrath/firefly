@@ -1,0 +1,285 @@
+
+Firefly.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000138  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000000e  00800040  00000138  000001ac  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001ba  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001ec  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000048  00000000  00000000  00000228  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000005ea  00000000  00000000  00000270  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000423  00000000  00000000  0000085a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000034d  00000000  00000000  00000c7d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000074  00000000  00000000  00000fcc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000036b  00000000  00000000  00001040  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    000000d2  00000000  00000000  000013ab  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000038  00000000  00000000  0000147d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0a c0       	rjmp	.+20     	; 0x16 <__ctors_end>
+   2:	1c c0       	rjmp	.+56     	; 0x3c <__bad_interrupt>
+   4:	1b c0       	rjmp	.+54     	; 0x3c <__bad_interrupt>
+   6:	1a c0       	rjmp	.+52     	; 0x3c <__bad_interrupt>
+   8:	19 c0       	rjmp	.+50     	; 0x3c <__bad_interrupt>
+   a:	18 c0       	rjmp	.+48     	; 0x3c <__bad_interrupt>
+   c:	17 c0       	rjmp	.+46     	; 0x3c <__bad_interrupt>
+   e:	16 c0       	rjmp	.+44     	; 0x3c <__bad_interrupt>
+  10:	15 c0       	rjmp	.+42     	; 0x3c <__bad_interrupt>
+  12:	14 c0       	rjmp	.+40     	; 0x3c <__bad_interrupt>
+  14:	13 c0       	rjmp	.+38     	; 0x3c <__bad_interrupt>
+
+00000016 <__ctors_end>:
+  16:	11 27       	eor	r17, r17
+  18:	1f bf       	out	0x3f, r17	; 63
+  1a:	cf e5       	ldi	r28, 0x5F	; 95
+  1c:	d0 e0       	ldi	r29, 0x00	; 0
+  1e:	de bf       	out	0x3e, r29	; 62
+  20:	cd bf       	out	0x3d, r28	; 61
+
+00000022 <__do_copy_data>:
+  22:	20 e0       	ldi	r18, 0x00	; 0
+  24:	a0 e4       	ldi	r26, 0x40	; 64
+  26:	b0 e0       	ldi	r27, 0x00	; 0
+  28:	e8 e3       	ldi	r30, 0x38	; 56
+  2a:	f1 e4       	ldi	r31, 0x41	; 65
+  2c:	02 c0       	rjmp	.+4      	; 0x32 <__do_copy_data+0x10>
+  2e:	31 91       	ld	r19, Z+
+  30:	3d 93       	st	X+, r19
+  32:	ae 34       	cpi	r26, 0x4E	; 78
+  34:	b2 07       	cpc	r27, r18
+  36:	d9 f7       	brne	.-10     	; 0x2e <__do_copy_data+0xc>
+  38:	7a d0       	rcall	.+244    	; 0x12e <main>
+  3a:	7c c0       	rjmp	.+248    	; 0x134 <_exit>
+
+0000003c <__bad_interrupt>:
+  3c:	e1 cf       	rjmp	.-62     	; 0x0 <__vectors>
+
+0000003e <_Z5setupv>:
+int carrierCounter = 1; // number of times in a row that the number of lumens reversed direction i.e.  higher or lower
+int blinkCounter = 1; // number of times through the bloop loop, on and off
+int senseCounter = 1; // number of times through the sense loop
+
+int setup(void){
+	DDRB |= _BV(DDB2); // set as output
+  3e:	0a 9a       	sbi	0x01, 2	; 1
+}
+  40:	08 95       	ret
+
+00000042 <_Z5bloopv>:
+
+
+int bloop (void) {
+PORTB |= _BV(PORTB2);
+  42:	12 9a       	sbi	0x02, 2	; 2
+PORTB |= _BV(PORTB0);// turn on
+  44:	10 9a       	sbi	0x02, 0	; 2
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  46:	43 ed       	ldi	r20, 0xD3	; 211
+  48:	50 e3       	ldi	r21, 0x30	; 48
+  4a:	41 50       	subi	r20, 0x01	; 1
+  4c:	50 40       	sbci	r21, 0x00	; 0
+  4e:	e9 f7       	brne	.-6      	; 0x4a <_Z5bloopv+0x8>
+  50:	00 c0       	rjmp	.+0      	; 0x52 <_Z5bloopv+0x10>
+  52:	00 00       	nop
+_delay_ms(50);
+
+PORTB &= ~_BV(PORTB2);
+  54:	12 98       	cbi	0x02, 2	; 2
+PORTB &= ~_BV(PORTB0); // turn off
+  56:	10 98       	cbi	0x02, 0	; 2
+  58:	43 ed       	ldi	r20, 0xD3	; 211
+  5a:	50 e3       	ldi	r21, 0x30	; 48
+  5c:	41 50       	subi	r20, 0x01	; 1
+  5e:	50 40       	sbci	r21, 0x00	; 0
+  60:	e9 f7       	brne	.-6      	; 0x5c <_Z5bloopv+0x1a>
+  62:	00 c0       	rjmp	.+0      	; 0x64 <__stack+0x5>
+  64:	00 00       	nop
+_delay_ms(50);
+
+
+}
+  66:	08 95       	ret
+
+00000068 <_Z5shinev>:
+
+void shine (void) {	
+	blinkCounter +=1;
+  68:	42 a1       	lds	r20, 0x42	; 0x800042 <blinkCounter>
+  6a:	53 a1       	lds	r21, 0x43	; 0x800043 <blinkCounter+0x1>
+  6c:	4f 5f       	subi	r20, 0xFF	; 255
+  6e:	5f 4f       	sbci	r21, 0xFF	; 255
+  70:	53 a9       	sts	0x43, r21	; 0x800043 <blinkCounter+0x1>
+  72:	42 a9       	sts	0x42, r20	; 0x800042 <blinkCounter>
+	if (blinkCounter <50) { //run loop for a number of times
+  74:	42 33       	cpi	r20, 0x32	; 50
+  76:	51 07       	cpc	r21, r17
+  78:	1c f4       	brge	.+6      	; 0x80 <_Z5shinev+0x18>
+		bloop(); // blink
+  7a:	e3 df       	rcall	.-58     	; 0x42 <_Z5bloopv>
+		shine(); // restart blinking loop
+  7c:	f5 df       	rcall	.-22     	; 0x68 <_Z5shinev>
+  7e:	08 95       	ret
+	}
+	else {blinkCounter = 0; senseCounter = 0;
+  80:	13 a9       	sts	0x43, r17	; 0x800043 <blinkCounter+0x1>
+  82:	12 a9       	sts	0x42, r17	; 0x800042 <blinkCounter>
+  84:	11 a9       	sts	0x41, r17	; 0x800041 <__data_start+0x1>
+  86:	10 a9       	sts	0x40, r17	; 0x800040 <__data_start>
+	carrierCounter=0;} // set counters back to zero and restart main loop
+  88:	15 a9       	sts	0x45, r17	; 0x800045 <carrierCounter+0x1>
+  8a:	14 a9       	sts	0x44, r17	; 0x800044 <carrierCounter>
+  8c:	08 95       	ret
+
+0000008e <_Z5sensev>:
+  8e:	43 ed       	ldi	r20, 0xD3	; 211
+  90:	50 e3       	ldi	r21, 0x30	; 48
+  92:	41 50       	subi	r20, 0x01	; 1
+  94:	50 40       	sbci	r21, 0x00	; 0
+  96:	e9 f7       	brne	.-6      	; 0x92 <_Z5sensev+0x4>
+  98:	00 c0       	rjmp	.+0      	; 0x9a <_Z5sensev+0xc>
+  9a:	00 00       	nop
+}
+
+int sense (void) {
+_delay_ms(50);
+
+lastLumens = lumens;
+  9c:	4c a1       	lds	r20, 0x4c	; 0x80004c <lumens>
+  9e:	5d a1       	lds	r21, 0x4d	; 0x80004d <lumens+0x1>
+  a0:	5b a9       	sts	0x4b, r21	; 0x80004b <lastLumens+0x1>
+  a2:	4a a9       	sts	0x4a, r20	; 0x80004a <lastLumens>
+lastCarrier=carrier;
+  a4:	48 a1       	lds	r20, 0x48	; 0x800048 <carrier>
+  a6:	59 a1       	lds	r21, 0x49	; 0x800049 <carrier+0x1>
+  a8:	57 a9       	sts	0x47, r21	; 0x800047 <lastCarrier+0x1>
+  aa:	46 a9       	sts	0x46, r20	; 0x800046 <lastCarrier>
+
+ADMUX = 1<<MUX0;               // ADC0 (PB0)
+  ac:	41 e0       	ldi	r20, 0x01	; 1
+  ae:	4b bb       	out	0x1b, r20	; 27
+ADCSRA = 1<<ADEN | 3<<ADPS0;   // Enable ADC, 125kHz clock
+  b0:	43 e8       	ldi	r20, 0x83	; 131
+  b2:	4d bb       	out	0x1d, r20	; 29
+ADCSRA = ADCSRA | 1<<ADSC;     // Start
+  b4:	ee 9a       	sbi	0x1d, 6	; 29
+while (ADCSRA & 1<<ADSC);      // Wait while conversion in progress
+  b6:	ee 99       	sbic	0x1d, 6	; 29
+  b8:	fe cf       	rjmp	.-4      	; 0xb6 <_Z5sensev+0x28>
+lumens = ADCL;               // Copy result to lumens
+  ba:	49 b3       	in	r20, 0x19	; 25
+  bc:	50 e0       	ldi	r21, 0x00	; 0
+  be:	5d a9       	sts	0x4d, r21	; 0x80004d <lumens+0x1>
+  c0:	4c a9       	sts	0x4c, r20	; 0x80004c <lumens>
+
+senseCounter += 1;
+  c2:	60 a1       	lds	r22, 0x40	; 0x800040 <__data_start>
+  c4:	71 a1       	lds	r23, 0x41	; 0x800041 <__data_start+0x1>
+  c6:	86 2f       	mov	r24, r22
+  c8:	97 2f       	mov	r25, r23
+  ca:	8f 5f       	subi	r24, 0xFF	; 255
+  cc:	9f 4f       	sbci	r25, 0xFF	; 255
+  ce:	91 a9       	sts	0x41, r25	; 0x800041 <__data_start+0x1>
+  d0:	80 a9       	sts	0x40, r24	; 0x800040 <__data_start>
+if (lumens > lastLumens) carrier = 1;
+  d2:	8a a1       	lds	r24, 0x4a	; 0x80004a <lastLumens>
+  d4:	9b a1       	lds	r25, 0x4b	; 0x80004b <lastLumens+0x1>
+  d6:	84 17       	cp	r24, r20
+  d8:	95 07       	cpc	r25, r21
+  da:	2c f4       	brge	.+10     	; 0xe6 <_Z5sensev+0x58>
+  dc:	41 e0       	ldi	r20, 0x01	; 1
+  de:	50 e0       	ldi	r21, 0x00	; 0
+  e0:	59 a9       	sts	0x49, r21	; 0x800049 <carrier+0x1>
+  e2:	48 a9       	sts	0x48, r20	; 0x800048 <carrier>
+  e4:	02 c0       	rjmp	.+4      	; 0xea <_Z5sensev+0x5c>
+else carrier = 0;
+  e6:	19 a9       	sts	0x49, r17	; 0x800049 <carrier+0x1>
+  e8:	18 a9       	sts	0x48, r17	; 0x800048 <carrier>
+if (carrier != lastCarrier) carrierCounter+=1;
+  ea:	88 a1       	lds	r24, 0x48	; 0x800048 <carrier>
+  ec:	99 a1       	lds	r25, 0x49	; 0x800049 <carrier+0x1>
+  ee:	46 a1       	lds	r20, 0x46	; 0x800046 <lastCarrier>
+  f0:	57 a1       	lds	r21, 0x47	; 0x800047 <lastCarrier+0x1>
+  f2:	84 17       	cp	r24, r20
+  f4:	95 07       	cpc	r25, r21
+  f6:	51 f0       	breq	.+20     	; 0x10c <__DATA_REGION_LENGTH__+0xc>
+  f8:	44 a1       	lds	r20, 0x44	; 0x800044 <carrierCounter>
+  fa:	55 a1       	lds	r21, 0x45	; 0x800045 <carrierCounter+0x1>
+  fc:	4f 5f       	subi	r20, 0xFF	; 255
+  fe:	5f 4f       	sbci	r21, 0xFF	; 255
+ 100:	55 a9       	sts	0x45, r21	; 0x800045 <carrierCounter+0x1>
+ 102:	44 a9       	sts	0x44, r20	; 0x800044 <carrierCounter>
+else carrierCounter=0;
+if (carrierCounter==5) senseCounter += 10; // this is the multiplier that modulates the phase variance
+ 104:	45 30       	cpi	r20, 0x05	; 5
+ 106:	51 07       	cpc	r21, r17
+ 108:	41 f4       	brne	.+16     	; 0x11a <__DATA_REGION_LENGTH__+0x1a>
+ 10a:	03 c0       	rjmp	.+6      	; 0x112 <__DATA_REGION_LENGTH__+0x12>
+
+senseCounter += 1;
+if (lumens > lastLumens) carrier = 1;
+else carrier = 0;
+if (carrier != lastCarrier) carrierCounter+=1;
+else carrierCounter=0;
+ 10c:	15 a9       	sts	0x45, r17	; 0x800045 <carrierCounter+0x1>
+ 10e:	14 a9       	sts	0x44, r17	; 0x800044 <carrierCounter>
+ 110:	04 c0       	rjmp	.+8      	; 0x11a <__DATA_REGION_LENGTH__+0x1a>
+if (carrierCounter==5) senseCounter += 10; // this is the multiplier that modulates the phase variance
+ 112:	65 5f       	subi	r22, 0xF5	; 245
+ 114:	7f 4f       	sbci	r23, 0xFF	; 255
+ 116:	71 a9       	sts	0x41, r23	; 0x800041 <__data_start+0x1>
+ 118:	60 a9       	sts	0x40, r22	; 0x800040 <__data_start>
+if (senseCounter<100) sense(); //why does everything break for values over 11
+ 11a:	40 a1       	lds	r20, 0x40	; 0x800040 <__data_start>
+ 11c:	51 a1       	lds	r21, 0x41	; 0x800041 <__data_start+0x1>
+ 11e:	44 36       	cpi	r20, 0x64	; 100
+ 120:	51 07       	cpc	r21, r17
+ 122:	0c f4       	brge	.+2      	; 0x126 <__DATA_REGION_LENGTH__+0x26>
+ 124:	b4 df       	rcall	.-152    	; 0x8e <_Z5sensev>
+}
+ 126:	08 95       	ret
+
+00000128 <_Z4loopv>:
+
+int loop (void) {
+	sense();
+ 128:	b2 df       	rcall	.-156    	; 0x8e <_Z5sensev>
+	shine();
+ 12a:	9e df       	rcall	.-196    	; 0x68 <_Z5shinev>
+
+}
+ 12c:	08 95       	ret
+
+0000012e <main>:
+
+int main(void) {
+	setup();
+ 12e:	87 df       	rcall	.-242    	; 0x3e <_Z5setupv>
+	for(;;) loop();
+ 130:	fb df       	rcall	.-10     	; 0x128 <_Z4loopv>
+ 132:	fe cf       	rjmp	.-4      	; 0x130 <main+0x2>
+
+00000134 <_exit>:
+ 134:	f8 94       	cli
+
+00000136 <__stop_program>:
+ 136:	ff cf       	rjmp	.-2      	; 0x136 <__stop_program>

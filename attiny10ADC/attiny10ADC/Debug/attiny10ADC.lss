@@ -1,0 +1,98 @@
+
+attiny10ADC.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000050  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800040  00800040  000000a4  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000a4  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000000d4  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000110  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000398  00000000  00000000  00000130  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 0000032f  00000000  00000000  000004c8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000001ac  00000000  00000000  000007f7  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  000009a4  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000026e  00000000  00000000  000009c8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  00000c36  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0a c0       	rjmp	.+20     	; 0x16 <__ctors_end>
+   2:	11 c0       	rjmp	.+34     	; 0x26 <__bad_interrupt>
+   4:	10 c0       	rjmp	.+32     	; 0x26 <__bad_interrupt>
+   6:	0f c0       	rjmp	.+30     	; 0x26 <__bad_interrupt>
+   8:	0e c0       	rjmp	.+28     	; 0x26 <__bad_interrupt>
+   a:	0d c0       	rjmp	.+26     	; 0x26 <__bad_interrupt>
+   c:	0c c0       	rjmp	.+24     	; 0x26 <__bad_interrupt>
+   e:	0b c0       	rjmp	.+22     	; 0x26 <__bad_interrupt>
+  10:	0a c0       	rjmp	.+20     	; 0x26 <__bad_interrupt>
+  12:	09 c0       	rjmp	.+18     	; 0x26 <__bad_interrupt>
+  14:	08 c0       	rjmp	.+16     	; 0x26 <__bad_interrupt>
+
+00000016 <__ctors_end>:
+  16:	11 27       	eor	r17, r17
+  18:	1f bf       	out	0x3f, r17	; 63
+  1a:	cf e5       	ldi	r28, 0x5F	; 95
+  1c:	d0 e0       	ldi	r29, 0x00	; 0
+  1e:	de bf       	out	0x3e, r29	; 62
+  20:	cd bf       	out	0x3d, r28	; 61
+  22:	02 d0       	rcall	.+4      	; 0x28 <main>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <_exit>
+
+00000026 <__bad_interrupt>:
+  26:	ec cf       	rjmp	.-40     	; 0x0 <__vectors>
+
+00000028 <main>:
+#include <avr/io.h>
+#include <stdint.h>
+
+int main (void) {
+	DDRB = 0b0100;                       // PB0 as an output
+  28:	44 e0       	ldi	r20, 0x04	; 4
+  2a:	41 b9       	out	0x01, r20	; 1
+	// Set up ADC on PB2
+	ADMUX = 1<<MUX0;                // ADC1 (PB1)
+  2c:	41 e0       	ldi	r20, 0x01	; 1
+  2e:	4b bb       	out	0x1b, r20	; 27
+	ADCSRA = 1<<ADEN | 3<<ADPS0;    // Enable ADC, 125kHz clock
+  30:	43 e8       	ldi	r20, 0x83	; 131
+  32:	4d bb       	out	0x1d, r20	; 29
+	// Set up waveform on PB0
+	TCCR0A = 1<<COM0A0 | 3<<WGM00;  // Toggle OC0A, Fast PWM
+  34:	43 e4       	ldi	r20, 0x43	; 67
+  36:	4e bd       	out	0x2e, r20	; 46
+	TCCR0B = 3<<WGM02 | 4<<CS00;    // Fast PWM with OCR0A as TOP; /256
+  38:	4c e1       	ldi	r20, 0x1C	; 28
+  3a:	4d bd       	out	0x2d, r20	; 45
+	// Main loop
+	for (;;) {
+		ADCSRA = ADCSRA | 1<<ADSC;    // Start
+  3c:	ee 9a       	sbi	0x1d, 6	; 29
+		while (ADCSRA & 1<<ADSC);     // Wait while conversion in progress
+  3e:	ee 99       	sbic	0x1d, 6	; 29
+  40:	fe cf       	rjmp	.-4      	; 0x3e <__SP_H__>
+		OCR0A = ADCL;                 // Copy result to frequency output
+  42:	49 b3       	in	r20, 0x19	; 25
+  44:	50 e0       	ldi	r21, 0x00	; 0
+  46:	57 bd       	out	0x27, r21	; 39
+  48:	46 bd       	out	0x26, r20	; 38
+	}
+  4a:	f8 cf       	rjmp	.-16     	; 0x3c <__CCP__>
+
+0000004c <_exit>:
+  4c:	f8 94       	cli
+
+0000004e <__stop_program>:
+  4e:	ff cf       	rjmp	.-2      	; 0x4e <__stop_program>
