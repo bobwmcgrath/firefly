@@ -14,6 +14,8 @@ more percise timing may be accomplished with interupts
 
 add an asyncronus loop that makes a green LED fade in and out in phase with the other loops
 
+add a function to sleep during the day
+
 design final board
 
 spec final components
