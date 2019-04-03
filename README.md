@@ -19,7 +19,8 @@ spec final components
 
 
 
-Usefull links
+Usefull links:
+
 programing the attiny10
 
 http://www.technoblogy.com/show?1YQY
