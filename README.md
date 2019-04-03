@@ -1,6 +1,7 @@
 # firefly
 This code has two loops, sense and shine.  In shine, the IR LED blinks on and off really really fast.  In sense the led is off and the sensor (an IR photo transistor) is read at the rate of LED blinking.  Then there is a debouncing algorythem.. or a more apropriatly rebouncing algorythem that makes sure each sensor value alternates being higher or lower than the previouse sensor value.  When this is the case some number of times in a row, another led blinking has been detected.  When blnking is detected the counter that defines the lengeth of the loop is multiplied by 1.1 casuing the sense loop to end sooner untill the LEDs are in sync.
 
+
 Things to do:
 
 convert arduino code to C code for the attiny10 (fireflyArduino.ino -> main.cpp)
@@ -14,6 +15,9 @@ add an asyncronus loop that makes a green LED fade in and out in phase with the 
 design final board
 
 spec final components
+
+
+
 
 Usefull links
 programing the attiny10
