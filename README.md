@@ -4,8 +4,6 @@ This code has two loops, sense and shine.  In shine, the IR LED blinks on and of
 
 Things to do:
 
-convert arduino code to C code for the attiny10 (fireflyArduino.ino -> main.cpp)
-
 optimize for low power consumption
 
 figure out how well this will work with more than 2 fireflys
