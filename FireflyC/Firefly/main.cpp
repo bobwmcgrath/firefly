@@ -45,7 +45,7 @@ void setup(void){
  */
 void bloop (void) {
 
-    if (daytimeDetect < dayThreshold) {
+    if (daytimeDetect < dayPause) {
 
         PORTB |= _BV(PORTB2);
         PORTB |= _BV(PORTB0);  // turn on
