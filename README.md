@@ -18,6 +18,8 @@ design final board
 
 spec final components
 
+add a phase locking mechansism to compensate for clock drift.  
+
 
 
 
