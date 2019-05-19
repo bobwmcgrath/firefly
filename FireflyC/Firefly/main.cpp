@@ -1,19 +1,3 @@
-/*
- * 
- *   Bob McCgrath, Neil Verplank
- *  
- *   Firefly.ccp is a simple program for the attiny series microcontroller that turns
- *   an LED on and off slowly (like a firefly), but is also "secretly" turning the LED
- *   and a corresponding infrared LED on and off every few milliseconds to create a 
- *   "carrier" signal.  We look for that signal, and when detected, "speed up" a bit to 
- *   try and stand in synch with our neighbor. NOT seeing a signal means we're in synch,
- *   or there's no nearby neighbor.
- *   
- *     
- */
-
-
-
 #include <avr/io.h>
 #include <stdint.h>
 #include <util/delay.h>
@@ -27,23 +11,27 @@ int shineCounter = 1; // number of times through the bloop loop, on and off
 int senseCounter1 = 1; // number of times through the sense loop
 int senseCounter2 =1; // becuse I cant do floats so this increments one for every 10 senseCounter1s
 int dayCounter =1;
+int dayFlag =0;
+int pwm=1;
 
 int setup(void){
 	//DDRB |= _BV(DDB2); // set as output
+	TCCR0A = 2<<COM0A0 | 3<<WGM00; // 10-bit PWM on OC0A (PB0), non-inverting mode
+	TCCR0B = 0<<WGM02 | 1<<CS00;   // Divide clock by 1
 	DDRB = 0b0101;
 }
 
 
 int shine (void) {
-	if (dayCounter < 98){
+	if (dayFlag==0){
 		PORTB |= _BV(PORTB2);
 		_delay_ms(1);
-		PORTB |= _BV(PORTB0);// turn on
+		//PORTB |= _BV(PORTB0);// turn on
 
 
 		PORTB &= ~_BV(PORTB2);
 		_delay_ms(1);
-		PORTB &= ~_BV(PORTB0); // turn off
+		//PORTB &= ~_BV(PORTB0); // turn off
 
 
 	shineCounter +=1;}
@@ -65,7 +53,10 @@ void sense () {
 	ADCSRA = ADCSRA | 1<<ADSC;     // Start
 	while (ADCSRA & 1<<ADSC);      // Wait while conversion in progress
 	lumens = ADCL;               // Copy result to lumens
-
+	pwm = 23+senseCounter1;
+	if (dayFlag==1) pwm=0;
+	OCR0A = pwm;
+	
 	senseCounter1 += 1;
 	if (lumens > 235) dayCounter+=1;
 	if (senseCounter1 % 10 == 0) senseCounter2 += 1;
@@ -75,7 +66,11 @@ void sense () {
 	else carrierCounter=0;
 	if (carrierCounter==8) {
 		senseCounter1 += senseCounter2; // this is the multiplier that modulates the phase variance
-		dayCounter=0;}
+		dayCounter=0;}	
+	
+	
+	
+	
 	//return senseCounter1;
 }
 
@@ -83,15 +78,21 @@ int loop (void) {
 	//sense();
 	while (senseCounter1<1000) sense();
 	//shine();
+	pwm = 0;
+	OCR0A = pwm;
 	while(shineCounter <500) shine(); // blink
+	if (dayCounter<991) dayFlag=0;
+	if (dayCounter>990) dayFlag=1;
 	//shine(); // restart blinking loop
 	//}
 	//else
+	
 	shineCounter = 0;
 	senseCounter1 = 0;
 	carrierCounter=0;
 	senseCounter2=0;
 	dayCounter=0;
+	//return dayFlag;
 }
 
 int main(void) {
