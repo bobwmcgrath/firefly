@@ -22,7 +22,7 @@ int setup(void){
 }
 
 
-int shine (void) {
+void shine (void) {
 	if (dayFlag==0){
 		PORTB |= _BV(PORTB2);
 		_delay_ms(1);
@@ -33,17 +33,18 @@ int shine (void) {
 		_delay_ms(1);
 		//PORTB &= ~_BV(PORTB0); // turn off
 
-
-	shineCounter +=1;}
-	else {shineCounter +=1;
-	_delay_ms(2);}
-	return shineCounter;
+		shineCounter +=1;
+	} else {
+		shineCounter +=1;
+		_delay_ms(2);
+	}
 
 }
 
 
 
 void sense () {
+
 	_delay_ms(1);
 	lastLumens = lumens;
 	lastCarrier=carrier;
