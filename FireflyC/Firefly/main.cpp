@@ -11,7 +11,7 @@ int shineCounter = 1; // number of times through the bloop loop, on and off
 int senseCounter1 = 1; // number of times through the sense loop
 int senseCounter2 =1; // becuse I cant do floats so this increments one for every 10 senseCounter1s
 int dayCounter =1;
-int dayFlag =0;
+//int dayFlag =0;
 int pwm=1;
 
 int setup(void){
@@ -23,7 +23,7 @@ int setup(void){
 
 
 void shine (void) {
-	if (dayFlag==0){
+	if (dayCounter<990){
 		PORTB |= _BV(PORTB2);
 		_delay_ms(1);
 		//PORTB |= _BV(PORTB0);// turn on
@@ -33,18 +33,20 @@ void shine (void) {
 		_delay_ms(1);
 		//PORTB &= ~_BV(PORTB0); // turn off
 
-		shineCounter +=1;
-	} else {
-		shineCounter +=1;
-		_delay_ms(2);
-	}
+		pwm = 23+2*shineCounter;
+		OCR0A = pwm;
+
+	shineCounter +=1;}
+	else {shineCounter +=1;
+	_delay_ms(2);}
+
+	//return shineCounter;
 
 }
 
 
 
 void sense () {
-
 	_delay_ms(1);
 	lastLumens = lumens;
 	lastCarrier=carrier;
@@ -54,8 +56,10 @@ void sense () {
 	ADCSRA = ADCSRA | 1<<ADSC;     // Start
 	while (ADCSRA & 1<<ADSC);      // Wait while conversion in progress
 	lumens = ADCL;               // Copy result to lumens
-	pwm = 23+senseCounter1;
-	if (dayFlag==1) pwm=0;
+
+	
+	if (pwm>5)pwm -= 3;
+	if (pwm<5)pwm = 0;
 	OCR0A = pwm;
 	
 	senseCounter1 += 1;
@@ -75,15 +79,14 @@ void sense () {
 	//return senseCounter1;
 }
 
-int loop (void) {
+void loop (void) {
 	//sense();
 	while (senseCounter1<1000) sense();
 	//shine();
-	pwm = 0;
-	OCR0A = pwm;
+	//pwm = 0;
 	while(shineCounter <500) shine(); // blink
-	if (dayCounter<991) dayFlag=0;
-	if (dayCounter>990) dayFlag=1;
+	//if (dayCounter<991) dayFlag=0;
+	//if (dayCounter>990) dayFlag=1;
 	//shine(); // restart blinking loop
 	//}
 	//else
