@@ -36,9 +36,10 @@ void shine (void) {
 		pwm = 23+2*shineCounter;
 		OCR0A = pwm;
 
-	shineCounter +=1;}
-	else {shineCounter +=1;
-	_delay_ms(2);}
+	} else {
+		_delay_ms(2);
+	}
+	shineCounter +=1;
 
 	//return shineCounter;
 
