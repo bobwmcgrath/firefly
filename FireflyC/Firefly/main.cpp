@@ -64,7 +64,7 @@ void sense () {
 	OCR0A = pwm;
 	
 	senseCounter1 += 1;
-	if (lumens > 235) dayCounter+=1;
+	if (lumens > 225) dayCounter+=1;
 	if (senseCounter1 % 10 == 0) senseCounter2 += 1;
 	if (lumens > lastLumens) carrier = 1;
 	else carrier = 0;
@@ -81,11 +81,12 @@ void sense () {
 }
 
 void loop (void) {
-	//sense();
-	while (senseCounter1<250) sense();
 	//shine();
 	//pwm = 0;
 	while(shineCounter <125) shine(); // blink
+	dayCounter=0;
+	//sense();
+	while (senseCounter1<250) sense();
 	//if (dayCounter<991) dayFlag=0;
 	//if (dayCounter>990) dayFlag=1;
 	//shine(); // restart blinking loop
@@ -96,7 +97,7 @@ void loop (void) {
 	senseCounter1 = 0;
 	carrierCounter=0;
 	senseCounter2=0;
-	dayCounter=0;
+
 	//return dayFlag;
 }
 
